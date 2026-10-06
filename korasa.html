@@ -1,0 +1,358 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#fbf8f1">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>كراسة</title>
+<style>
+:root{--bg:#fbf8f1;--card:#fff;--ink:#1f2a2e;--mute:#6b777b;--line:#e7e1d3;--acc:#0f6b6b;--acc2:#e9f3f1;--bad:#b3261e;--ok:#1b7f3b}
+@media(prefers-color-scheme:dark){:root{--bg:#14191b;--card:#1c2326;--ink:#e8eeee;--mute:#92a0a4;--line:#2a3437;--acc:#4fc3b8;--acc2:#1d2f2e;--bad:#ff8a80;--ok:#6fdc8c}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Tahoma,sans-serif;line-height:1.6}
+header{display:flex;justify-content:space-between;align-items:center;padding:14px 16px;position:sticky;top:0;background:var(--bg);border-bottom:1px solid var(--line);z-index:5}
+header h1{margin:0;font-size:22px}header small{color:var(--mute);font-weight:400;font-size:13px}
+main{max-width:760px;margin:0 auto;padding:16px 16px 80px}
+h2{font-size:16px;color:var(--mute);margin:24px 0 8px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px}
+button,.btn{font:inherit;cursor:pointer;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:12px;padding:10px 14px;display:inline-block;text-align:center}
+button.pri,.pri{background:var(--acc);color:#fff;border-color:var(--acc)}
+@media(prefers-color-scheme:dark){button.pri,.pri{color:#06201e}}
+button.big{width:100%;padding:18px;font-size:18px;margin-bottom:10px}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.row>*{flex:1}
+input[type=text],input[type=password],select,textarea{width:100%;font:inherit;padding:10px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--ink)}
+.item{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px;margin-bottom:8px;cursor:pointer}
+.item b{display:block}.item span{color:var(--mute);font-size:13px}
+.timer{font-size:56px;text-align:center;font-variant-numeric:tabular-nums;direction:ltr;margin:20px 0}
+.dot{display:inline-block;width:12px;height:12px;border-radius:50%;background:var(--bad);margin-inline-end:8px;animation:p 1s infinite}
+.paused .dot{animation:none;opacity:.3}
+@keyframes p{50%{opacity:.2}}
+.tabs{display:flex;gap:6px;overflow-x:auto;margin:12px 0;padding-bottom:4px}
+.tabs button{white-space:nowrap;padding:8px 12px}.tabs button.on{background:var(--acc);color:#fff;border-color:var(--acc)}
+@media(prefers-color-scheme:dark){.tabs button.on{color:#06201e}}
+.md{overflow-wrap:anywhere}
+.md h1,.md h2,.md h3{color:var(--acc);margin:18px 0 6px;font-size:18px}
+.md table{border-collapse:collapse;width:100%;display:block;overflow-x:auto;margin:8px 0}
+.md th,.md td{border:1px solid var(--line);padding:6px 8px}.md th{background:var(--acc2)}
+.md blockquote{margin:8px 0;padding:4px 12px;border-inline-start:3px solid var(--acc);background:var(--acc2)}
+.md code{background:var(--acc2);padding:1px 5px;border-radius:5px}
+.fc{padding:18px;margin-bottom:10px;cursor:pointer;min-height:70px}
+.fc .a{display:none;margin-top:10px;padding-top:10px;border-top:1px dashed var(--line);color:var(--acc)}
+.fc.flip .a{display:block}
+.opt{display:block;width:100%;text-align:start;margin:6px 0}
+.opt.ok{border-color:var(--ok);background:var(--acc2)}.opt.no{border-color:var(--bad)}
+.why{display:none;margin-top:8px;color:var(--mute)}
+.msg{padding:10px 12px;border-radius:12px;margin:8px 0;max-width:92%}
+.msg.u{background:var(--acc);color:#fff;margin-inline-start:auto}
+@media(prefers-color-scheme:dark){.msg.u{color:#06201e}}
+.msg.m{background:var(--card);border:1px solid var(--line)}
+.err{color:var(--bad);margin:10px 0;white-space:pre-wrap}
+.spin{width:36px;height:36px;border:4px solid var(--line);border-top-color:var(--acc);border-radius:50%;animation:s 1s linear infinite;margin:20px auto}
+@keyframes s{to{transform:rotate(360deg)}}
+dialog{border:1px solid var(--line);border-radius:16px;background:var(--bg);color:var(--ink);width:min(92vw,460px);padding:18px}
+dialog::backdrop{background:#0008}
+label.f{display:block;margin:12px 0 4px;font-size:14px;color:var(--mute)}
+a{color:var(--acc)}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<header>
+  <h1>كراسة <small>Korasa</small></h1>
+  <button id="btnSet" aria-label="الإعدادات">⚙️ الإعدادات</button>
+</header>
+<main>
+  <section id="vHome">
+    <div class="card">
+      <button id="btnRec" class="big pri">🎙️ ابدأ تسجيل محاضرة</button>
+      <label class="btn" style="width:100%">⬆️ رفع تسجيل صوتي جاهز<input type="file" id="file" accept="audio/*,video/mp4,video/webm" hidden></label>
+    </div>
+    <div id="keyWarn" class="card" style="margin-top:12px" hidden>
+      محتاج مفتاح Gemini مجاني الأول. افتح <b>الإعدادات</b> وحطه.
+    </div>
+    <h2>محاضراتك</h2>
+    <div id="list"></div>
+  </section>
+
+  <section id="vRec" hidden>
+    <div class="card">
+      <input type="text" id="recTitle" placeholder="عنوان المحاضرة (اختياري)">
+      <div class="timer" id="timer">00:00</div>
+      <div id="recState" style="text-align:center;color:var(--mute)"></div>
+      <div class="row" style="margin-top:16px">
+        <button id="btnPause">⏸️ إيقاف مؤقت</button>
+        <button id="btnStop" class="pri">⏹️ إنهاء وتحويل لملاحظات</button>
+      </div>
+      <button id="btnCancel" style="width:100%;margin-top:8px">إلغاء</button>
+    </div>
+  </section>
+
+  <section id="vProc" hidden>
+    <div class="card" style="text-align:center">
+      <div class="spin"></div>
+      <div id="procMsg">جاري المعالجة…</div>
+      <div id="procErr" class="err"></div>
+      <div id="procActs" class="row" hidden>
+        <button id="btnRetry" class="pri">إعادة المحاولة</button>
+        <button id="btnSaveAudio">💾 حفظ الصوت</button>
+        <button id="btnHome2">رجوع</button>
+      </div>
+    </div>
+  </section>
+
+  <section id="vNote" hidden>
+    <div class="row" style="margin-bottom:8px">
+      <button id="btnBack" style="flex:0 0 auto">→ رجوع</button>
+      <button id="btnCopy">📋 نسخ</button>
+      <button id="btnDl">⬇️ تحميل .md</button>
+      <button id="btnDel">🗑️</button>
+    </div>
+    <h1 id="nTitle" style="font-size:22px;margin:8px 0"></h1>
+    <div class="tabs" id="tabs"></div>
+    <div id="tabBody"></div>
+  </section>
+</main>
+
+<dialog id="dlg">
+  <h3 style="margin-top:0">الإعدادات</h3>
+  <label class="f">مفتاح Gemini API (مجاني من <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">aistudio.google.com/apikey</a>)</label>
+  <input type="password" id="sKey" placeholder="AIza…" autocomplete="off">
+  <label class="f">الموديل</label>
+  <select id="sModel">
+    <option value="gemini-2.5-flash-lite">gemini-2.5-flash-lite (الأخف والأوسع حدودًا)</option>
+    <option value="gemini-2.5-flash">gemini-2.5-flash (أدق)</option>
+  </select>
+  <label class="f">نمط الملاحظات</label>
+  <select id="sStyle">
+    <option value="med">طبي — High-yield بأسلوب USMLE</option>
+    <option value="gen">عام</option>
+    <option value="det">تفصيلي (يغطي كل نقطة)</option>
+  </select>
+  <label class="f">لغة الملاحظات</label>
+  <select id="sLang">
+    <option value="auto">نفس لغة المحاضرة</option>
+    <option value="en">English</option>
+    <option value="ar">عربي (المصطلحات بالإنجليزي)</option>
+  </select>
+  <label class="f"><input type="checkbox" id="sTrans"> استخراج النص الكامل للمحاضرة أيضًا (أبطأ وأكثر استهلاكًا)</label>
+  <div class="row" style="margin-top:16px"><button id="sSave" class="pri">حفظ</button><button id="sClose">إغلاق</button></div>
+  <p style="color:var(--mute);font-size:13px">المفتاح والملاحظات بتتخزن على جهازك فقط.</p>
+</dialog>
+
+<script src="https://cdn.jsdelivr.net/npm/marked@12/marked.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/dompurify@3/dist/purify.min.js"></script>
+<script>
+const $=id=>document.getElementById(id);
+const API='https://generativelanguage.googleapis.com';
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const ld=(k,d)=>{try{return JSON.parse(localStorage.getItem(k))??d}catch{return d}};
+const sv=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v));return true}catch{alert('مساحة التخزين امتلأت. احذف بعض المحاضرات القديمة.');return false}};
+
+let S=Object.assign({key:'',model:'gemini-2.5-flash-lite',style:'med',lang:'auto',trans:false},ld('korasa_s',{}));
+let notes=ld('korasa_n',[]);
+let cur=null,curTab='notes',pending=null,chat=[];
+
+function show(id){['vHome','vRec','vProc','vNote'].forEach(v=>$(v).hidden=v!==id);window.scrollTo(0,0)}
+function fmt(s){s=Math.floor(s);const m=Math.floor(s/60),h=Math.floor(m/60);return(h?String(h).padStart(2,'0')+':':'')+String(m%60).padStart(2,'0')+':'+String(s%60).padStart(2,'0')}
+function md(t){
+  let h=window.marked?marked.parse(t||''):'<pre>'+esc(t||'')+'</pre>';
+  if(window.DOMPurify)h=DOMPurify.sanitize(h);
+  const d=document.createElement('div');d.className='md';d.innerHTML=h;
+  d.querySelectorAll('p,li,h1,h2,h3,h4,td,th,blockquote').forEach(e=>e.dir='auto');
+  return d;
+}
+
+/* ---------- Home ---------- */
+function home(){
+  $('keyWarn').hidden=!!S.key;
+  const L=$('list');L.innerHTML='';
+  if(!notes.length){L.innerHTML='<div class="card" style="color:var(--mute)">لسه مفيش محاضرات. سجّل أول محاضرة.</div>';}
+  notes.forEach(n=>{
+    const d=document.createElement('div');d.className='card item';
+    d.innerHTML=`<div><b dir="auto">${esc(n.title)}</b><span>${new Date(n.date).toLocaleDateString('ar-EG')} · ${n.dur?fmt(n.dur):''}</span></div><span>←</span>`;
+    d.onclick=()=>openNote(n.id);L.appendChild(d);
+  });
+  show('vHome');
+}
+
+/* ---------- Settings ---------- */
+$('btnSet').onclick=()=>{$('sKey').value=S.key;$('sModel').value=S.model;$('sStyle').value=S.style;$('sLang').value=S.lang;$('sTrans').checked=S.trans;$('dlg').showModal()};
+$('sClose').onclick=()=>$('dlg').close();
+$('sSave').onclick=()=>{S={key:$('sKey').value.trim(),model:$('sModel').value,style:$('sStyle').value,lang:$('sLang').value,trans:$('sTrans').checked};sv('korasa_s',S);$('dlg').close();$('keyWarn').hidden=!!S.key};
+
+/* ---------- Recording ---------- */
+let rec,chunks=[],stream,tInt,t0=0,acc=0,paused=false,wake=null,recMime='';
+function pickMime(){for(const m of['audio/webm;codecs=opus','audio/webm','audio/mp4','audio/ogg;codecs=opus'])if(window.MediaRecorder&&MediaRecorder.isTypeSupported(m))return m;return''}
+function tick(){$('timer').textContent=fmt(acc+(paused?0:(Date.now()-t0)/1000))}
+$('btnRec').onclick=async()=>{
+  if(!S.key){$('btnSet').click();return}
+  try{
+    stream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:false,noiseSuppression:true,autoGainControl:true}});
+  }catch(e){alert('مش قادر أوصل للميكروفون. اسمح بالصلاحية، ولازم الصفحة تكون على HTTPS.');return}
+  recMime=pickMime();chunks=[];
+  rec=new MediaRecorder(stream,Object.assign({audioBitsPerSecond:32000},recMime?{mimeType:recMime}:{}));
+  rec.ondataavailable=e=>e.data.size&&chunks.push(e.data);
+  rec.start(5000);acc=0;t0=Date.now();paused=false;
+  $('recTitle').value='';$('btnPause').textContent='⏸️ إيقاف مؤقت';
+  $('recState').innerHTML='<span class="dot"></span>جاري التسجيل';$('vRec').classList.remove('paused');
+  clearInterval(tInt);tInt=setInterval(tick,500);tick();show('vRec');
+  try{wake=await navigator.wakeLock?.request('screen')}catch{}
+};
+$('btnPause').onclick=()=>{
+  if(!paused){rec.pause();acc+=(Date.now()-t0)/1000;paused=true;$('btnPause').textContent='▶️ استكمال';$('recState').innerHTML='<span class="dot"></span>متوقف مؤقتًا';$('vRec').classList.add('paused')}
+  else{rec.resume();t0=Date.now();paused=false;$('btnPause').textContent='⏸️ إيقاف مؤقت';$('recState').innerHTML='<span class="dot"></span>جاري التسجيل';$('vRec').classList.remove('paused')}
+};
+function endRec(){clearInterval(tInt);stream?.getTracks().forEach(t=>t.stop());wake?.release?.();wake=null}
+$('btnStop').onclick=()=>{
+  if(!paused)acc+=(Date.now()-t0)/1000;
+  const dur=acc,title=$('recTitle').value.trim();
+  rec.onstop=()=>{endRec();const blob=new Blob(chunks,{type:rec.mimeType||recMime||'audio/webm'});run(blob,title,dur)};
+  rec.stop();
+};
+$('btnCancel').onclick=()=>{if(!confirm('إلغاء التسجيل وحذفه؟'))return;rec.onstop=null;try{rec.stop()}catch{}endRec();home()};
+$('file').onchange=async e=>{
+  const f=e.target.files[0];e.target.value='';if(!f)return;
+  if(!S.key){$('btnSet').click();return}
+  const dur=await new Promise(r=>{const a=new Audio(URL.createObjectURL(f));a.onloadedmetadata=()=>r(isFinite(a.duration)?a.duration:0);a.onerror=()=>r(0)});
+  run(f,f.name.replace(/\.[^.]+$/,''),dur);
+};
+window.addEventListener('beforeunload',e=>{if(rec&&rec.state!=='inactive'){e.preventDefault();e.returnValue=''}});
+
+/* ---------- Gemini ---------- */
+async function gem(body,tries=3){
+  for(let i=0;i<tries;i++){
+    const r=await fetch(`${API}/v1beta/models/${S.model}:generateContent?key=${encodeURIComponent(S.key)}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+    const j=await r.json().catch(()=>({}));
+    if(r.ok){
+      const c=j.candidates?.[0];const t=(c?.content?.parts||[]).map(p=>p.text||'').join('');
+      if(!t)throw new Error('رد فارغ من الموديل ('+(c?.finishReason||j.promptFeedback?.blockReason||'؟')+')');
+      return{text:t,finish:c?.finishReason};
+    }
+    const msg=j.error?.message||('HTTP '+r.status);
+    if((r.status===503||r.status===500)&&i<tries-1){await sleep(3000*(i+1));continue}
+    if(r.status===429)throw new Error('وصلت لحد الاستخدام المجاني (دقيقة/يوم). استنى شوية أو جرّب بعد ما الحصة تتجدد.\n'+msg);
+    if(r.status===400&&/API key/i.test(msg))throw new Error('مفتاح الـ API غلط. راجع الإعدادات.');
+    throw new Error(msg);
+  }
+}
+const baseMime=m=>(m||'audio/webm').split(';')[0].replace('video/webm','audio/webm').replace('video/mp4','audio/mp4');
+const b64=blob=>new Promise((res,rej)=>{const f=new FileReader();f.onload=()=>res(f.result.split(',')[1]);f.onerror=rej;f.readAsDataURL(blob)});
+async function uploadFile(blob,mime){
+  const st=await fetch(`${API}/upload/v1beta/files?key=${encodeURIComponent(S.key)}`,{method:'POST',headers:{'X-Goog-Upload-Protocol':'resumable','X-Goog-Upload-Command':'start','X-Goog-Upload-Header-Content-Length':String(blob.size),'X-Goog-Upload-Header-Content-Type':mime,'Content-Type':'application/json'},body:JSON.stringify({file:{display_name:'lecture'}})});
+  if(!st.ok)throw new Error('فشل بدء رفع الملف ('+st.status+')');
+  const url=st.headers.get('x-goog-upload-url');if(!url)throw new Error('فشل رفع الملف');
+  const up=await fetch(url,{method:'POST',headers:{'X-Goog-Upload-Offset':'0','X-Goog-Upload-Command':'upload, finalize'},body:blob});
+  if(!up.ok)throw new Error('فشل رفع الملف ('+up.status+')');
+  let f=(await up.json()).file;
+  for(let i=0;i<90&&f.state==='PROCESSING';i++){await sleep(2000);f=await(await fetch(`${API}/v1beta/${f.name}?key=${encodeURIComponent(S.key)}`)).json()}
+  if(f.state!=='ACTIVE')throw new Error('الملف لم يجهز للمعالجة');
+  return f;
+}
+function sys(){
+  const st={
+    med:'The user is a medical student. Produce high-yield, evidence-based, exam-oriented (USMLE-style) notes: definitions, etiology, pathophysiology, clinical features, investigations, diagnosis, management, complications, key numbers/cut-offs, mnemonics. Use tables for comparisons and differential diagnoses. Keep medical terms in English.',
+    gen:'Produce clear, well-organized study notes: main ideas, definitions, examples, and a short recap.',
+    det:'Produce detailed notes that cover every point the lecturer made, in order, without dropping examples, numbers or definitions. Use tables where useful.'
+  }[S.style];
+  const lg={auto:"Write in the same language the lecturer speaks. If the lecture is Arabic mixed with English terms, write in Arabic and keep technical terms in English.",en:'Write in English.',ar:'Write in Arabic, keeping technical/medical terms in English.'}[S.lang];
+  return `You turn lecture recordings into study material. ${st} ${lg} Use Markdown (headings, bullets, bold for key terms, tables). Only include what is in the lecture; do not invent facts. Mark unclear audio as [unclear]. If the lecturer stresses something as important or exam-relevant, flag it with ⭐. End the notes with a "## Quick recap" section.`;
+}
+const schema={type:'OBJECT',properties:{
+  title:{type:'STRING'},notes:{type:'STRING'},
+  flashcards:{type:'ARRAY',items:{type:'OBJECT',properties:{q:{type:'STRING'},a:{type:'STRING'}},required:['q','a']}},
+  mcqs:{type:'ARRAY',items:{type:'OBJECT',properties:{q:{type:'STRING'},options:{type:'ARRAY',items:{type:'STRING'}},answer:{type:'INTEGER'},why:{type:'STRING'}},required:['q','options','answer','why']}}
+},required:['title','notes','flashcards','mcqs']};
+
+async function run(blob,title,dur){
+  pending={blob,title,dur};show('vProc');
+  $('procErr').textContent='';$('procActs').hidden=true;document.querySelector('.spin').hidden=false;
+  try{
+    const mime=baseMime(blob.type);let part;
+    $('procMsg').textContent='جاري تجهيز الصوت…';
+    if(blob.size<12e6)part={inlineData:{mimeType:mime,data:await b64(blob)}};
+    else{$('procMsg').textContent='جاري رفع الصوت (الملف كبير)…';const f=await uploadFile(blob,mime);part={fileData:{mimeType:mime,fileUri:f.uri}}}
+    $('procMsg').textContent='جاري كتابة الملاحظات… (قد تأخذ دقيقة)';
+    const r=await gem({
+      systemInstruction:{parts:[{text:sys()}]},
+      contents:[{role:'user',parts:[part,{text:'Listen to the whole lecture. Return JSON with: a short title, the full structured notes (Markdown), 8-15 flashcards (q/a), and 5-10 MCQs (4 options each, answer = zero-based index of the correct option, why = short explanation).'}]}],
+      generationConfig:{responseMimeType:'application/json',responseSchema:schema,temperature:0.3,maxOutputTokens:32000}
+    });
+    let d;try{d=JSON.parse(r.text)}catch{throw new Error('الرد اتقطع قبل ما يكتمل (المحاضرة طويلة). جرّب نمط "عام" أو قسّم التسجيل.')}
+    let transcript='';
+    if(S.trans){
+      $('procMsg').textContent='جاري استخراج النص الكامل…';
+      try{transcript=(await gem({contents:[{role:'user',parts:[part,{text:'Transcribe this lecture accurately in its original language. Plain text with paragraph breaks only.'}]}],generationConfig:{temperature:0,maxOutputTokens:60000}})).text}catch(e){transcript='(تعذر استخراج النص: '+e.message+')'}
+    }
+    const n={id:Date.now().toString(36),title:title||d.title||'محاضرة',date:Date.now(),dur,notes:d.notes,flashcards:d.flashcards||[],mcqs:d.mcqs||[],transcript};
+    notes.unshift(n);sv('korasa_n',notes);pending=null;openNote(n.id);
+  }catch(e){
+    document.querySelector('.spin').hidden=true;$('procMsg').textContent='حصلت مشكلة';$('procErr').textContent=e.message;$('procActs').hidden=false;
+  }
+}
+$('btnRetry').onclick=()=>pending&&run(pending.blob,pending.title,pending.dur);
+$('btnHome2').onclick=home;
+$('btnSaveAudio').onclick=()=>{if(!pending)return;const a=document.createElement('a');a.href=URL.createObjectURL(pending.blob);a.download='lecture.'+(baseMime(pending.blob.type).split('/')[1]||'webm').replace('mp4','m4a');a.click()};
+
+/* ---------- Note view ---------- */
+function openNote(id){cur=notes.find(n=>n.id===id);if(!cur)return home();chat=[];curTab='notes';$('nTitle').textContent=cur.title;$('nTitle').dir='auto';drawTabs();drawTab();show('vNote')}
+function drawTabs(){
+  const T=[['notes','📝 ملاحظات'],['cards','🃏 بطاقات ('+cur.flashcards.length+')'],['quiz','❓ أسئلة ('+cur.mcqs.length+')'],['chat','💬 اسأل']];
+  if(cur.transcript)T.push(['tr','📄 النص']);
+  $('tabs').innerHTML='';
+  T.forEach(([k,l])=>{const b=document.createElement('button');b.textContent=l;if(k===curTab)b.className='on';b.onclick=()=>{curTab=k;drawTabs();drawTab()};$('tabs').appendChild(b)});
+}
+function drawTab(){
+  const B=$('tabBody');B.innerHTML='';
+  if(curTab==='notes')B.appendChild(md(cur.notes));
+  else if(curTab==='tr'){const p=document.createElement('div');p.className='card';p.dir='auto';p.style.whiteSpace='pre-wrap';p.textContent=cur.transcript;B.appendChild(p)}
+  else if(curTab==='cards'){
+    cur.flashcards.forEach(c=>{const d=document.createElement('div');d.className='card fc';d.innerHTML=`<div dir="auto"><b>${esc(c.q)}</b></div><div class="a" dir="auto">${esc(c.a)}</div>`;d.onclick=()=>d.classList.toggle('flip');B.appendChild(d)});
+    B.insertAdjacentHTML('afterbegin','<p style="color:var(--mute)">اضغط على البطاقة لإظهار الإجابة.</p>');
+  }
+  else if(curTab==='quiz'){
+    cur.mcqs.forEach((m,qi)=>{
+      const d=document.createElement('div');d.className='card';d.style.marginBottom='10px';
+      d.innerHTML=`<div dir="auto"><b>${qi+1}. ${esc(m.q)}</b></div>`;
+      const why=document.createElement('div');why.className='why';why.dir='auto';why.textContent=m.why;
+      m.options.forEach((o,i)=>{
+        const b=document.createElement('button');b.className='opt';b.dir='auto';b.textContent=String.fromCharCode(65+i)+') '+o;
+        b.onclick=()=>{d.querySelectorAll('.opt').forEach((x,j)=>{x.disabled=true;if(j===m.answer)x.classList.add('ok')});if(i!==m.answer)b.classList.add('no');why.style.display='block'};
+        d.appendChild(b);
+      });
+      d.appendChild(why);B.appendChild(d);
+    });
+  }
+  else if(curTab==='chat'){
+    const box=document.createElement('div');box.id='chatBox';B.appendChild(box);
+    chat.forEach(m=>addMsg(m.role==='user'?'u':'m',m.parts[0].text));
+    if(!chat.length)box.innerHTML='<p style="color:var(--mute)">اسأل أي سؤال عن المحاضرة دي.</p>';
+    const row=document.createElement('div');row.className='row';row.style.marginTop='12px';
+    row.innerHTML='<input type="text" id="chIn" placeholder="اكتب سؤالك…" style="flex:3"><button id="chGo" class="pri">إرسال</button>';
+    B.appendChild(row);
+    const go=async()=>{
+      const q=$('chIn').value.trim();if(!q)return;$('chIn').value='';
+      if(!chat.length)box.innerHTML='';
+      chat.push({role:'user',parts:[{text:q}]});addMsg('u',q);const w=addMsg('m','…');
+      try{
+        const r=await gem({systemInstruction:{parts:[{text:'Answer the student\'s questions using the lecture notes below. If the answer isn\'t in the lecture, say so, then answer from general knowledge and mark it clearly. Reply in the language of the question. Be concise.\n\nLECTURE NOTES:\n'+cur.notes+(cur.transcript?'\n\nTRANSCRIPT:\n'+cur.transcript:'')}]},contents:chat,generationConfig:{temperature:0.4}});
+        chat.push({role:'model',parts:[{text:r.text}]});w.replaceWith(mdMsg(r.text));
+      }catch(e){w.className='err';w.textContent=e.message}
+    };
+    $('chGo').onclick=go;$('chIn').onkeydown=e=>{if(e.key==='Enter')go()};
+  }
+}
+function addMsg(k,t){const d=document.createElement('div');d.className='msg '+k;d.dir='auto';if(k==='m'&&t!=='…'){d.appendChild(md(t))}else d.textContent=t;$('chatBox').appendChild(d);d.scrollIntoView({block:'nearest'});return d}
+function mdMsg(t){const d=document.createElement('div');d.className='msg m';d.appendChild(md(t));return d}
+
+$('btnBack').onclick=home;
+$('btnCopy').onclick=async()=>{try{await navigator.clipboard.writeText('# '+cur.title+'\n\n'+cur.notes);$('btnCopy').textContent='✅ تم';setTimeout(()=>$('btnCopy').textContent='📋 نسخ',1200)}catch{alert('تعذر النسخ')}};
+$('btnDl').onclick=()=>{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['# '+cur.title+'\n\n'+cur.notes],{type:'text/markdown'}));a.download=cur.title.replace(/[\\/:*?"<>|]/g,'')+'.md';a.click()};
+$('btnDel').onclick=()=>{if(!confirm('حذف المحاضرة دي نهائيًا؟'))return;notes=notes.filter(n=>n.id!==cur.id);sv('korasa_n',notes);home()};
+
+home();
+</script>
+</body>
+</html>
